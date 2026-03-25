@@ -36,6 +36,7 @@ export async function generateMarketingContent(params: GenerationParams, brandPr
     config: {
       systemInstruction: `You are an expert marketing copywriter for entrepreneurs. 
       Your goal is to generate high-converting content based on the user's business and brand profile.
+      CRITICAL: All generated text (title, content, cta, hashtags) MUST be in the language specified in the prompt (${params.language}).
       Always return the response in JSON format.`,
       responseMimeType: "application/json",
     },
@@ -69,6 +70,10 @@ export async function generateWeeklyPlanner(brandProfile: any, language: string 
     model: "gemini-3-flash-preview",
     contents: prompt,
     config: {
+      systemInstruction: `You are an expert content strategist. 
+      Your goal is to create a high-level weekly content plan for an entrepreneur.
+      CRITICAL: All generated text (day, topic, type) MUST be in ${language}.
+      The plan should be returned in JSON format.`,
       responseMimeType: "application/json",
     }
   });

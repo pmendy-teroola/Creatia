@@ -1,21 +1,23 @@
 import { useAuth } from '../AuthContext';
-import { User, Mail, Bell, Shield, CreditCard } from 'lucide-react';
+import { useLanguage } from '../LanguageContext';
+import { User, Mail, Bell, Shield, CreditCard, Globe } from 'lucide-react';
 
 export default function Settings() {
   const { profile } = useAuth();
+  const { t, language, setLanguage } = useLanguage();
 
   const sections = [
-    { title: 'Account', icon: User, description: 'Manage your personal information and profile.' },
-    { title: 'Notifications', icon: Bell, description: 'Configure how you receive alerts and updates.' },
-    { title: 'Security', icon: Shield, description: 'Update your password and security settings.' },
-    { title: 'Billing', icon: CreditCard, description: 'Manage your subscription and payment methods.' },
+    { title: t('account'), icon: User, description: t('accountSub') },
+    { title: t('notifications'), icon: Bell, description: t('notificationsSub') },
+    { title: t('security'), icon: Shield, description: t('securitySub') },
+    { title: t('billing'), icon: CreditCard, description: t('billingSub') },
   ];
 
   return (
     <div className="max-w-3xl mx-auto space-y-8">
       <header>
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Settings</h1>
-        <p className="text-gray-500 mt-1">Manage your account and preferences.</p>
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{t('settings')}</h1>
+        <p className="text-gray-500 mt-1">{t('settingsSub')}</p>
       </header>
 
       <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
@@ -29,6 +31,36 @@ export default function Settings() {
               <Mail className="w-4 h-4" />
               {profile?.email}
             </p>
+          </div>
+        </div>
+
+        <div className="p-8 border-b border-gray-50">
+          <div className="flex items-center gap-6">
+            <div className="bg-gray-100 p-3 rounded-2xl text-gray-600">
+              <Globe className="w-6 h-6" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-gray-900">{t('appLanguage')}</h3>
+              <p className="text-sm text-gray-500">{t('selectLanguage')}</p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setLanguage('en')}
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                  language === 'en' ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                English
+              </button>
+              <button
+                onClick={() => setLanguage('fr')}
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                  language === 'fr' ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                Français
+              </button>
+            </div>
           </div>
         </div>
 
@@ -53,10 +85,10 @@ export default function Settings() {
       </div>
 
       <div className="bg-red-50 p-8 rounded-3xl border border-red-100">
-        <h3 className="text-red-900 font-bold">Danger Zone</h3>
-        <p className="text-red-700 text-sm mt-1 mb-4">Once you delete your account, there is no going back. Please be certain.</p>
+        <h3 className="text-red-900 font-bold">{t('dangerZone')}</h3>
+        <p className="text-red-700 text-sm mt-1 mb-4">{t('deleteAccountSub')}</p>
         <button className="bg-red-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-red-700 transition-colors shadow-lg shadow-red-100">
-          Delete Account
+          {t('deleteAccount')}
         </button>
       </div>
     </div>

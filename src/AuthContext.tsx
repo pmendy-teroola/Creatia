@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, User, signInWithPopup, signOut } from 'firebase/auth';
 import { auth, googleProvider, db } from './firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, getDocFromServer } from 'firebase/firestore';
 import { UserProfile } from './types';
+import { toast } from 'sonner';
 
 interface AuthContextType {
   user: User | null;
@@ -21,46 +22,77 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
-      if (user) {
-        const docRef = doc(db, 'users', user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setProfile(docSnap.data() as UserProfile);
-        } else {
-          const newProfile: UserProfile = {
-            uid: user.uid,
-            email: user.email || '',
-            displayName: user.displayName || '',
-            createdAt: new Date().toISOString(),
-          };
-          await setDoc(docRef, newProfile);
-          setProfile(newProfile);
+    async function testConnection() {
+      try {
+        await getDocFromServer(doc(db, 'test', 'connection'));
+      } catch (error) {
+        if (error instanceof Error && error.message.includes('the client is offline')) {
+          console.error("Please check your Firebase configuration.");
         }
-      } else {
-        setProfile(null);
       }
-      setLoading(false);
+    }
+    testConnection();
+
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      try {
+        setUser(user);
+        if (user) {
+          const docRef = doc(db, 'users', user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setProfile(docSnap.data() as UserProfile);
+          } else {
+            const newProfile: UserProfile = {
+              uid: user.uid,
+              email: user.email || '',
+              displayName: user.displayName || '',
+              createdAt: new Date().toISOString(),
+            };
+            await setDoc(docRef, newProfile);
+            setProfile(newProfile);
+          }
+        } else {
+          setProfile(null);
+        }
+      } catch (error) {
+        console.error("Auth initialization error:", error);
+        toast.error("Error initializing authentication");
+      } finally {
+        setLoading(false);
+      }
     });
 
     return unsubscribe;
   }, []);
 
   const login = async () => {
-    await signInWithPopup(auth, googleProvider);
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Login failed. Please try again.");
+    }
   };
 
   const logout = async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   const updateProfile = async (data: Partial<UserProfile>) => {
     if (!user) return;
-    const docRef = doc(db, 'users', user.uid);
-    const updatedProfile = { ...profile, ...data } as UserProfile;
-    await setDoc(docRef, updatedProfile, { merge: true });
-    setProfile(updatedProfile);
+    try {
+      const docRef = doc(db, 'users', user.uid);
+      const updatedProfile = { ...profile, ...data } as UserProfile;
+      await setDoc(docRef, updatedProfile, { merge: true });
+      setProfile(updatedProfile);
+    } catch (error) {
+      console.error("Update profile error:", error);
+      toast.error("Failed to update profile");
+    }
   };
 
   return (

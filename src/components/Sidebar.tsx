@@ -3,15 +3,18 @@ import { LayoutDashboard, PenTool, Calendar, Palette, Settings, LogOut, Sparkles
 import { useAuth } from '../AuthContext';
 import { cn } from '../lib/utils';
 
+import { useLanguage } from '../LanguageContext';
+
 export default function Sidebar() {
   const { logout } = useAuth();
+  const { t } = useLanguage();
 
   const navItems = [
-    { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/generate', icon: PenTool, label: 'Generate Content' },
-    { to: '/calendar', icon: Calendar, label: 'Calendar' },
-    { to: '/brand', icon: Palette, label: 'Brand Builder' },
-    { to: '/settings', icon: Settings, label: 'Settings' },
+    { to: '/', icon: LayoutDashboard, label: t('dashboard') },
+    { to: '/generate', icon: PenTool, label: t('generate') },
+    { to: '/calendar', icon: Calendar, label: t('calendar') },
+    { to: '/brand', icon: Palette, label: t('brand') },
+    { to: '/settings', icon: Settings, label: t('settings') },
   ];
 
   return (
@@ -20,7 +23,7 @@ export default function Sidebar() {
         <div className="bg-blue-600 p-1.5 rounded-lg">
           <Sparkles className="w-6 h-6 text-white" />
         </div>
-        <span className="text-xl font-bold tracking-tight">CreateAI</span>
+        <span className="text-xl font-bold tracking-tight">{t('appName')}</span>
       </div>
 
       <nav className="flex-1 px-4 py-4 space-y-1">
@@ -49,7 +52,7 @@ export default function Sidebar() {
           className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-700 transition-all duration-200"
         >
           <LogOut className="w-5 h-5" />
-          Logout
+          {t('logout')}
         </button>
       </div>
     </aside>

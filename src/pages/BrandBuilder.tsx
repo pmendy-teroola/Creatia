@@ -3,8 +3,11 @@ import { useAuth } from '../AuthContext';
 import { Palette, Save, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { useLanguage } from '../LanguageContext';
+
 export default function BrandBuilder() {
   const { profile, updateProfile } = useAuth();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     brandName: profile?.brandName || '',
@@ -20,10 +23,10 @@ export default function BrandBuilder() {
     setLoading(true);
     try {
       await updateProfile(formData);
-      toast.success('Brand profile updated!');
+      toast.success(t('saveBrand'));
     } catch (error) {
       console.error(error);
-      toast.error('Failed to update profile.');
+      toast.error('Error');
     } finally {
       setLoading(false);
     }
@@ -32,15 +35,15 @@ export default function BrandBuilder() {
   return (
     <div className="max-w-3xl mx-auto space-y-8">
       <header>
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Brand Builder</h1>
-        <p className="text-gray-500 mt-1">Teach CreateAI about your brand to get better results.</p>
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{t('brand')}</h1>
+        <p className="text-gray-500 mt-1">{t('brandSub')}</p>
       </header>
 
       <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Brand Name</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">{t('brandName')}</label>
               <input
                 type="text"
                 value={formData.brandName}
@@ -51,7 +54,7 @@ export default function BrandBuilder() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Business Type</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">{t('businessType')}</label>
               <input
                 type="text"
                 value={formData.businessType}
@@ -62,7 +65,7 @@ export default function BrandBuilder() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Target Audience</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">{t('targetAudience')}</label>
               <input
                 type="text"
                 value={formData.targetAudience}
@@ -73,7 +76,7 @@ export default function BrandBuilder() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Brand Tone</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">{t('tone')}</label>
               <select
                 value={formData.brandTone}
                 onChange={(e) => setFormData({ ...formData, brandTone: e.target.value })}
@@ -88,7 +91,7 @@ export default function BrandBuilder() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Primary Goal</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">{t('primaryGoal')}</label>
               <select
                 value={formData.brandGoal}
                 onChange={(e) => setFormData({ ...formData, brandGoal: e.target.value })}
@@ -108,7 +111,7 @@ export default function BrandBuilder() {
             className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-            Save Brand Profile
+            {t('saveBrand')}
           </button>
         </form>
       </div>
@@ -118,10 +121,9 @@ export default function BrandBuilder() {
           <Palette className="w-5 h-5" />
         </div>
         <div>
-          <h3 className="text-blue-900 font-bold">Why complete your profile?</h3>
+          <h3 className="text-blue-900 font-bold">{t('whyProfile')}</h3>
           <p className="text-blue-700 text-sm mt-1">
-            When your profile is complete, CreateAI uses this information as context for every generation. 
-            This ensures your content is always consistent with your brand voice and goals.
+            {t('whyProfileSub')}
           </p>
         </div>
       </div>

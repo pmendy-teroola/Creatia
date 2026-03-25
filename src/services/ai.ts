@@ -49,17 +49,18 @@ export async function generateMarketingContent(params: GenerationParams, brandPr
   }
 }
 
-export async function generateWeeklyPlanner(brandProfile: any) {
+export async function generateWeeklyPlanner(brandProfile: any, language: string = 'English') {
   const prompt = `
     Generate a weekly content calendar for a business with the following profile:
     Brand Name: ${brandProfile.brandName}
     Business Type: ${brandProfile.businessType}
     Target Audience: ${brandProfile.targetAudience}
     Tone: ${brandProfile.brandTone}
+    Language: ${language}
 
     Return a JSON array of 7 objects, one for each day of the week.
     Each object should have:
-    - day: Day of the week (Monday, Tuesday, etc.)
+    - day: Day of the week (Monday, Tuesday, etc. in ${language})
     - type: Content type (Instagram, LinkedIn, Email, etc.)
     - topic: A brief topic or hook for the post
   `;

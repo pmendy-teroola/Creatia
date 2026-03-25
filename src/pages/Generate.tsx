@@ -8,8 +8,11 @@ import { Sparkles, Copy, Calendar, Edit, Check, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'motion/react';
 
+import { useLanguage } from '../LanguageContext';
+
 export default function Generate() {
   const { user, profile } = useAuth();
+  const { t, language: appLanguage } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<GeneratedContent | null>(null);
   const [copied, setCopied] = useState(false);
@@ -20,7 +23,7 @@ export default function Generate() {
     targetAudience: profile?.targetAudience || '',
     tone: profile?.brandTone || 'Professional',
     goal: profile?.brandGoal || 'Brand Awareness',
-    language: profile?.language || 'English',
+    language: profile?.language || (appLanguage === 'fr' ? 'French' : 'English'),
     length: 'medium',
   });
 
@@ -45,10 +48,10 @@ export default function Generate() {
 
       const docRef = await addDoc(collection(db, 'users', user.uid, 'content'), newContent);
       setResult({ ...newContent, id: docRef.id });
-      toast.success('Content generated successfully!');
+      toast.success(appLanguage === 'fr' ? 'Contenu généré avec succès !' : 'Content generated successfully!');
     } catch (error) {
       console.error(error);
-      toast.error('Failed to generate content. Please try again.');
+      toast.error(appLanguage === 'fr' ? 'Échec de la génération. Veuillez réessayer.' : 'Failed to generate content. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -60,7 +63,7 @@ export default function Generate() {
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-    toast.success('Copied to clipboard!');
+    toast.success(appLanguage === 'fr' ? 'Copié dans le presse-papiers !' : 'Copied to clipboard!');
   };
 
   const contentTypes: ContentType[] = [
@@ -70,8 +73,8 @@ export default function Generate() {
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Generate Content</h1>
-        <p className="text-gray-500 mt-1">Fill in the details and let AI do the heavy lifting.</p>
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{t('generate')}</h1>
+        <p className="text-gray-500 mt-1">{t('generateSub')}</p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -79,7 +82,7 @@ export default function Generate() {
           <form onSubmit={handleGenerate} className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Content Type</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t('contentType')}</label>
                 <select
                   value={params.type}
                   onChange={(e) => setParams({ ...params, type: e.target.value as ContentType })}
@@ -90,7 +93,7 @@ export default function Generate() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Business Type</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t('businessType')}</label>
                 <input
                   type="text"
                   value={params.businessType}
@@ -101,7 +104,7 @@ export default function Generate() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Target Audience</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t('targetAudience')}</label>
                 <input
                   type="text"
                   value={params.targetAudience}
@@ -112,7 +115,7 @@ export default function Generate() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Tone</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t('tone')}</label>
                 <select
                   value={params.tone}
                   onChange={(e) => setParams({ ...params, tone: e.target.value })}
@@ -127,7 +130,7 @@ export default function Generate() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Goal</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t('goal')}</label>
                 <select
                   value={params.goal}
                   onChange={(e) => setParams({ ...params, goal: e.target.value })}
@@ -141,7 +144,7 @@ export default function Generate() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Language</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t('language')}</label>
                 <select
                   value={params.language}
                   onChange={(e) => setParams({ ...params, language: e.target.value })}
@@ -156,7 +159,7 @@ export default function Generate() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Length</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t('length')}</label>
                 <select
                   value={params.length}
                   onChange={(e) => setParams({ ...params, length: e.target.value as any })}
@@ -177,12 +180,12 @@ export default function Generate() {
               {loading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Generating...
+                  {t('generating')}
                 </>
               ) : (
                 <>
                   <Sparkles className="w-5 h-5" />
-                  Generate with AI
+                  {t('generateWithAI')}
                 </>
               )}
             </button>
@@ -202,13 +205,13 @@ export default function Generate() {
                 <div className="flex justify-between items-start mb-6">
                   <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">{result.type}</span>
                   <div className="flex gap-2">
-                    <button onClick={handleCopy} className="p-2 hover:bg-gray-50 rounded-xl text-gray-500 transition-colors" title="Copy">
+                    <button onClick={handleCopy} className="p-2 hover:bg-gray-50 rounded-xl text-gray-500 transition-colors" title={t('copy')}>
                       {copied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5" />}
                     </button>
-                    <button className="p-2 hover:bg-gray-50 rounded-xl text-gray-500 transition-colors" title="Edit">
+                    <button className="p-2 hover:bg-gray-50 rounded-xl text-gray-500 transition-colors" title={t('edit')}>
                       <Edit className="w-5 h-5" />
                     </button>
-                    <button className="p-2 hover:bg-gray-50 rounded-xl text-gray-500 transition-colors" title="Schedule">
+                    <button className="p-2 hover:bg-gray-50 rounded-xl text-gray-500 transition-colors" title={t('schedule')}>
                       <Calendar className="w-5 h-5" />
                     </button>
                   </div>
@@ -221,7 +224,7 @@ export default function Generate() {
                   </div>
                   {result.cta && (
                     <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100">
-                      <p className="text-sm font-bold text-blue-800 uppercase tracking-wider mb-1">Call to Action</p>
+                      <p className="text-sm font-bold text-blue-800 uppercase tracking-wider mb-1">{t('cta')}</p>
                       <p className="text-blue-700 font-medium">{result.cta}</p>
                     </div>
                   )}
@@ -239,9 +242,9 @@ export default function Generate() {
                 <div className="bg-white p-4 rounded-2xl shadow-sm mb-4">
                   <Sparkles className="w-8 h-8 text-blue-600" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900">Ready to create?</h3>
+                <h3 className="text-lg font-bold text-gray-900">{t('readyToCreate')}</h3>
                 <p className="text-gray-500 mt-2 max-w-xs">
-                  Fill in the form and click generate to see the magic happen.
+                  {t('readyToCreateSub')}
                 </p>
               </div>
             )}

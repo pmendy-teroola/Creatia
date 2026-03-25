@@ -123,12 +123,12 @@ export default function Dashboard() {
             
             <div className="space-y-4">
               <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/10">
-                <p className="text-sm font-medium">"Top 5 tips for entrepreneurs in ${profile?.businessType || 'your industry'}"</p>
-                <p className="text-xs text-blue-200 mt-2">Blog Post • High Engagement Potential</p>
+                <p className="text-sm font-medium">"{t('suggestion1').replace('{industry}', profile?.businessType || t('yourIndustry'))}"</p>
+                <p className="text-xs text-blue-200 mt-2">{t('suggestion1Sub')}</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/10">
-                <p className="text-sm font-medium">"Behind the scenes of ${profile?.brandName || 'your brand'}"</p>
-                <p className="text-xs text-blue-200 mt-2">Instagram Reel • Trending Topic</p>
+                <p className="text-sm font-medium">"{t('suggestion2').replace('{brand}', profile?.brandName || t('yourBrand'))}"</p>
+                <p className="text-xs text-blue-200 mt-2">{t('suggestion2Sub')}</p>
               </div>
             </div>
 

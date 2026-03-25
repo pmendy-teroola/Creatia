@@ -7,7 +7,7 @@ import { useLanguage } from '../LanguageContext';
 
 export default function BrandBuilder() {
   const { profile, updateProfile } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     brandName: profile?.brandName || '',
@@ -32,6 +32,29 @@ export default function BrandBuilder() {
     }
   };
 
+  const tones = [
+    { value: 'Professional', label: t('professional') },
+    { value: 'Friendly', label: t('friendly') },
+    { value: 'Witty', label: t('witty') },
+    { value: 'Urgent', label: t('urgent') },
+    { value: 'Educational', label: t('educational') },
+  ];
+
+  const goals = [
+    { value: 'Brand Awareness', label: t('brandAwareness') },
+    { value: 'Lead Generation', label: t('leadGeneration') },
+    { value: 'Sales', label: t('sales') },
+    { value: 'Engagement', label: t('engagement') },
+  ];
+
+  const languages = [
+    { value: 'English', label: t('english') },
+    { value: 'Spanish', label: t('spanish') },
+    { value: 'French', label: t('french') },
+    { value: 'German', label: t('german') },
+    { value: 'Portuguese', label: t('portuguese') },
+  ];
+
   return (
     <div className="max-w-3xl mx-auto space-y-8">
       <header>
@@ -48,7 +71,7 @@ export default function BrandBuilder() {
                 type="text"
                 value={formData.brandName}
                 onChange={(e) => setFormData({ ...formData, brandName: e.target.value })}
-                placeholder="e.g. Acme Corp"
+                placeholder={language === 'fr' ? "ex: Acme Corp" : "e.g. Acme Corp"}
                 className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
               />
             </div>
@@ -59,7 +82,7 @@ export default function BrandBuilder() {
                 type="text"
                 value={formData.businessType}
                 onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
-                placeholder="e.g. Digital Marketing Agency"
+                placeholder={language === 'fr' ? "ex: Agence de marketing digital" : "e.g. Digital Marketing Agency"}
                 className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
               />
             </div>
@@ -70,7 +93,7 @@ export default function BrandBuilder() {
                 type="text"
                 value={formData.targetAudience}
                 onChange={(e) => setFormData({ ...formData, targetAudience: e.target.value })}
-                placeholder="e.g. Small Business Owners"
+                placeholder={language === 'fr' ? "ex: Propriétaires de petites entreprises" : "e.g. Small Business Owners"}
                 className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
               />
             </div>
@@ -82,11 +105,7 @@ export default function BrandBuilder() {
                 onChange={(e) => setFormData({ ...formData, brandTone: e.target.value })}
                 className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
               >
-                <option>Professional</option>
-                <option>Friendly</option>
-                <option>Witty</option>
-                <option>Urgent</option>
-                <option>Educational</option>
+                {tones.map(tone => <option key={tone.value} value={tone.value}>{tone.label}</option>)}
               </select>
             </div>
 
@@ -97,10 +116,18 @@ export default function BrandBuilder() {
                 onChange={(e) => setFormData({ ...formData, brandGoal: e.target.value })}
                 className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
               >
-                <option>Brand Awareness</option>
-                <option>Lead Generation</option>
-                <option>Sales</option>
-                <option>Engagement</option>
+                {goals.map(goal => <option key={goal.value} value={goal.value}>{goal.label}</option>)}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">{t('language')}</label>
+              <select
+                value={formData.language}
+                onChange={(e) => setFormData({ ...formData, language: e.target.value })}
+                className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              >
+                {languages.map(lang => <option key={lang.value} value={lang.value}>{lang.label}</option>)}
               </select>
             </div>
           </div>

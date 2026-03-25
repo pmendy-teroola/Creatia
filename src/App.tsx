@@ -11,6 +11,7 @@ import Settings from './pages/Settings';
 import Login from './pages/Login';
 
 import { LanguageProvider } from './LanguageContext';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -21,22 +22,24 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <LanguageProvider>
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/" element={<AuthGuard><Layout /></AuthGuard>}>
-              <Route index element={<Dashboard />} />
-              <Route path="generate" element={<Generate />} />
-              <Route path="calendar" element={<Calendar />} />
-              <Route path="brand" element={<BrandBuilder />} />
-              <Route path="settings" element={<Settings />} />
-            </Route>
-          </Routes>
-        </Router>
-        <Toaster position="top-right" />
-      </LanguageProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <LanguageProvider>
+          <Router>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<AuthGuard><Layout /></AuthGuard>}>
+                <Route index element={<Dashboard />} />
+                <Route path="generate" element={<Generate />} />
+                <Route path="calendar" element={<Calendar />} />
+                <Route path="brand" element={<BrandBuilder />} />
+                <Route path="settings" element={<Settings />} />
+              </Route>
+            </Routes>
+          </Router>
+          <Toaster position="top-right" />
+        </LanguageProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }

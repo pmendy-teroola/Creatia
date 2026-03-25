@@ -4,6 +4,7 @@ import { db } from '../firebase';
 import { collection, query, onSnapshot, orderBy, addDoc } from 'firebase/firestore';
 import { GeneratedContent } from '../types';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths } from 'date-fns';
+import { enUS, fr } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock, Loader2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { toast } from 'sonner';
@@ -18,6 +19,8 @@ export default function Calendar() {
   const [contents, setContents] = useState<GeneratedContent[]>([]);
   const [loading, setLoading] = useState(true);
   const [generatingWeekly, setGeneratingWeekly] = useState(false);
+
+  const dateLocale = language === 'fr' ? fr : enUS;
 
   useEffect(() => {
     if (!user) return;
@@ -75,6 +78,10 @@ export default function Calendar() {
     }
   };
 
+  const weekDays = language === 'fr' 
+    ? ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
+    : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
   return (
     <div className="space-y-8">
       <header className="flex justify-between items-center">
@@ -86,8 +93,8 @@ export default function Calendar() {
           <button onClick={prevMonth} className="p-2 hover:bg-gray-50 rounded-xl transition-colors">
             <ChevronLeft className="w-5 h-5 text-gray-600" />
           </button>
-          <span className="text-sm font-bold text-gray-900 min-w-[120px] text-center">
-            {format(currentDate, 'MMMM yyyy')}
+          <span className="text-sm font-bold text-gray-900 min-w-[120px] text-center capitalize">
+            {format(currentDate, 'MMMM yyyy', { locale: dateLocale })}
           </span>
           <button onClick={nextMonth} className="p-2 hover:bg-gray-50 rounded-xl transition-colors">
             <ChevronRight className="w-5 h-5 text-gray-600" />
@@ -97,7 +104,7 @@ export default function Calendar() {
 
       <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="grid grid-cols-7 border-b border-gray-50">
-          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+          {weekDays.map(day => (
             <div key={day} className="py-4 text-center text-xs font-bold text-gray-400 uppercase tracking-widest border-r border-gray-50 last:border-r-0">
               {day}
             </div>
@@ -146,7 +153,7 @@ export default function Calendar() {
               <div key={item.id} className="flex justify-between items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 group hover:border-blue-200 transition-all">
                 <div>
                   <h3 className="text-sm font-bold text-gray-900">{item.title}</h3>
-                  <p className="text-xs text-gray-500">{item.type} • {format(new Date(item.createdAt), 'MMM d')}</p>
+                  <p className="text-xs text-gray-500 capitalize">{item.type} • {format(new Date(item.createdAt), 'MMM d', { locale: dateLocale })}</p>
                 </div>
                 <button className="text-xs font-bold text-blue-600 hover:underline">{t('schedule')}</button>
               </div>

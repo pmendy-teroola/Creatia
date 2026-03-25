@@ -66,8 +66,44 @@ export default function Generate() {
     toast.success(appLanguage === 'fr' ? 'Copié dans le presse-papiers !' : 'Copied to clipboard!');
   };
 
-  const contentTypes: ContentType[] = [
-    'Instagram', 'LinkedIn', 'Email', 'Blog', 'WhatsApp', 'Video Script', 'Sales Page', 'Product Description'
+  const contentTypes = [
+    { value: 'Instagram', label: t('instagram') },
+    { value: 'LinkedIn', label: t('linkedin') },
+    { value: 'Email', label: t('email') },
+    { value: 'Blog', label: t('blog') },
+    { value: 'WhatsApp', label: t('whatsapp') },
+    { value: 'Video Script', label: t('videoScript') },
+    { value: 'Sales Page', label: t('salesPage') },
+    { value: 'Product Description', label: t('productDescription') },
+  ];
+
+  const tones = [
+    { value: 'Professional', label: t('professional') },
+    { value: 'Friendly', label: t('friendly') },
+    { value: 'Witty', label: t('witty') },
+    { value: 'Urgent', label: t('urgent') },
+    { value: 'Educational', label: t('educational') },
+  ];
+
+  const goals = [
+    { value: 'Brand Awareness', label: t('brandAwareness') },
+    { value: 'Lead Generation', label: t('leadGeneration') },
+    { value: 'Sales', label: t('sales') },
+    { value: 'Engagement', label: t('engagement') },
+  ];
+
+  const languages = [
+    { value: 'English', label: t('english') },
+    { value: 'Spanish', label: t('spanish') },
+    { value: 'French', label: t('french') },
+    { value: 'German', label: t('german') },
+    { value: 'Portuguese', label: t('portuguese') },
+  ];
+
+  const lengths = [
+    { value: 'short', label: t('short') },
+    { value: 'medium', label: t('medium') },
+    { value: 'long', label: t('long') },
   ];
 
   return (
@@ -88,7 +124,7 @@ export default function Generate() {
                   onChange={(e) => setParams({ ...params, type: e.target.value as ContentType })}
                   className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 >
-                  {contentTypes.map(t => <option key={t} value={t}>{t}</option>)}
+                  {contentTypes.map(ct => <option key={ct.value} value={ct.value}>{ct.label}</option>)}
                 </select>
               </div>
 
@@ -98,7 +134,7 @@ export default function Generate() {
                   type="text"
                   value={params.businessType}
                   onChange={(e) => setParams({ ...params, businessType: e.target.value })}
-                  placeholder="e.g. SaaS, Coffee Shop"
+                  placeholder={appLanguage === 'fr' ? "ex: SaaS, Café" : "e.g. SaaS, Coffee Shop"}
                   className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 />
               </div>
@@ -109,7 +145,7 @@ export default function Generate() {
                   type="text"
                   value={params.targetAudience}
                   onChange={(e) => setParams({ ...params, targetAudience: e.target.value })}
-                  placeholder="e.g. Young Professionals"
+                  placeholder={appLanguage === 'fr' ? "ex: Jeunes professionnels" : "e.g. Young Professionals"}
                   className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 />
               </div>
@@ -121,11 +157,7 @@ export default function Generate() {
                   onChange={(e) => setParams({ ...params, tone: e.target.value })}
                   className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 >
-                  <option>Professional</option>
-                  <option>Friendly</option>
-                  <option>Witty</option>
-                  <option>Urgent</option>
-                  <option>Educational</option>
+                  {tones.map(tone => <option key={tone.value} value={tone.value}>{tone.label}</option>)}
                 </select>
               </div>
 
@@ -136,10 +168,7 @@ export default function Generate() {
                   onChange={(e) => setParams({ ...params, goal: e.target.value })}
                   className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 >
-                  <option>Brand Awareness</option>
-                  <option>Lead Generation</option>
-                  <option>Sales</option>
-                  <option>Engagement</option>
+                  {goals.map(goal => <option key={goal.value} value={goal.value}>{goal.label}</option>)}
                 </select>
               </div>
 
@@ -150,11 +179,7 @@ export default function Generate() {
                   onChange={(e) => setParams({ ...params, language: e.target.value })}
                   className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 >
-                  <option>English</option>
-                  <option>Spanish</option>
-                  <option>French</option>
-                  <option>German</option>
-                  <option>Portuguese</option>
+                  {languages.map(lang => <option key={lang.value} value={lang.value}>{lang.label}</option>)}
                 </select>
               </div>
 
@@ -165,9 +190,7 @@ export default function Generate() {
                   onChange={(e) => setParams({ ...params, length: e.target.value as any })}
                   className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 >
-                  <option value="short">Short</option>
-                  <option value="medium">Medium</option>
-                  <option value="long">Long</option>
+                  {lengths.map(len => <option key={len.value} value={len.value}>{len.label}</option>)}
                 </select>
               </div>
             </div>

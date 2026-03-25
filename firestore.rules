@@ -1,0 +1,71 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: /users/{userId}
+    // Fields:
+    //   - uid: string (required)
+    //   - email: string (required)
+    //   - displayName: string
+    //   - brandName: string
+    //   - businessType: string
+    //   - targetAudience: string
+    //   - brandTone: string
+    //   - brandGoal: string
+    //   - language: string
+    //   - createdAt: timestamp
+    //
+    // Collection: /users/{userId}/content/{contentId}
+    // Fields:
+    //   - uid: string (required)
+    //   - type: string (required, enum)
+    //   - title: string (required)
+    //   - content: string (required)
+    //   - cta: string
+    //   - hashtags: list
+    //   - scheduledDate: timestamp
+    //   - createdAt: timestamp
+    //   - status: string (enum)
+    //
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email']) &&
+             data.uid is string &&
+             data.email is string;
+    }
+
+    function isValidContent(data) {
+      return data.keys().hasAll(['uid', 'type', 'title', 'content']) &&
+             data.uid is string &&
+             data.type is string &&
+             data.title is string &&
+             data.content is string;
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data);
+      
+      match /content/{contentId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidContent(request.resource.data);
+        allow update: if isOwner(userId) && isValidContent(request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Stores user-specific settings and brand profile.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "brandName": { "type": "string" },
+        "businessType": { "type": "string" },
+        "targetAudience": { "type": "string" },
+        "brandTone": { "type": "string" },
+        "brandGoal": { "type": "string" },
+        "language": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "GeneratedContent": {
+      "title": "Generated Content",
+      "description": "Stores AI-generated marketing content.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "type": { "type": "string", "enum": ["Instagram", "LinkedIn", "Email", "Blog", "WhatsApp", "Video Script", "Sales Page", "Product Description"] },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "cta": { "type": "string" },
+        "hashtags": { "type": "array", "items": { "type": "string" } },
+        "scheduledDate": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["draft", "scheduled", "posted"] }
+      },
+      "required": ["uid", "type", "title", "content"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile and brand settings."
+    },
+    "/users/{userId}/content/{contentId}": {
+      "schema": "GeneratedContent",
+      "description": "Generated content for a specific user."
+    }
+  }
+}
